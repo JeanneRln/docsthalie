@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maquette — Mon séjour Thalie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #d0021b;
+      --red-dark: #8c1b1b;
+      --ink: #3e3024;
+      --black: #111111;
+      --muted: #7a6a60;
+      --line: #e4ddd6;
+      --paper: #fffcfa;
+      --bg: #f4f0eb;
+      --ok: #1f6b45;
+      --ok-bg: #e7f3ec;
+      --wait: #8a5a12;
+      --wait-bg: #f8f0e2;
+      --miss-bg: #fdecee;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: Montserrat, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+    button, input, select, textarea { font-family: inherit; color: inherit; }
+    button { cursor: pointer; }
+    .top {
+      background: var(--black);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 28px;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; background: transparent; border: 0; color: white; padding: 0; text-align: left; appearance: none; }
+    .logo { height: 58px; width: 58px; display: block; background: transparent; border-radius: 0; }
+    .brand em { font-style: normal; font-weight: 600; letter-spacing: 0.01em; font-size: 16px; }
+    .who { font-size: 13px; color: #f3ecec; text-align: right; }
+    .who small { display: block; color: #b7a8a8; font-size: 11px; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 36px 22px 120px; }
+    .screen { display: none; }
+    body[data-screen="login"] .screen-login,
+    body[data-screen="sejours"] .screen-sejours,
+    body[data-screen="dossier"] .screen-dossier,
+    body[data-screen="docs"] .screen-docs,
+    body[data-screen="bureau"] .screen-bureau,
+    body[data-screen="fiche"] .screen-fiche { display: block; }
+    body[data-screen="login"] .who { display: none; }
+    body[data-screen="login"] .screen-login > h1 { text-align: center; }
+    h1 {
+      font-family: "Libre Baskerville", serif;
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 1.15;
+      margin: 0 0 8px;
+    }
+    .lede { margin: 0 0 28px; color: var(--muted); max-width: 62ch; line-height: 1.55; }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+    }
+    .login-card { max-width: 460px; margin: 24px auto 0; padding: 32px 28px; }
+    label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
+    input[type="email"], input[type="password"], input[type="text"], select, textarea {
+      width: 100%;
+      border: 1px solid #d9d0c8;
+      background: white;
+      padding: 12px 14px;
+      font-size: 15px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .btn {
+      background: var(--red);
+      color: white;
+      border: 0;
+      padding: 13px 18px;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      border-radius: 12px;
+    }
+    .btn:hover { background: var(--red-dark); }
+    .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+    .btn.small { padding: 8px 12px; font-size: 13px; }
+    .hint { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 14px 0 0; }
+    .linkish { background: none; border: 0; color: var(--red); padding: 0; font-weight: 600; font-size: 14px; }
+    .stay-list { display: grid; gap: 14px; }
+    .stay {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+    .kicker { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--red); font-weight: 700; margin: 0 0 6px; }
+    .stay h2 { margin: 0 0 6px; font-size: 22px; font-family: "Libre Baskerville", serif; font-weight: 400; }
+    .stay p { margin: 0; color: var(--muted); line-height: 1.45; }
+    .child-name { margin: 0 0 4px; font-size: 26px; font-family: "Libre Baskerville", serif; font-weight: 400; }
+    .locked {
+      background: #f7f4f1;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .locked legend { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ok); padding: 0 6px; }
+    .locked .choice { margin-bottom: 8px; }
+    fieldset { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
+    .pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+    }
+    .pill.miss { color: var(--red); background: var(--miss-bg); }
+    .pill.ok { color: var(--ok); background: var(--ok-bg); }
+    .pill.wait { color: var(--wait); background: var(--wait-bg); }
+    .pill.opt { color: var(--muted); background: #f3f0ec; }
+    .note {
+      border-left: 3px solid var(--red);
+      background: white;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 18px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .files { display: grid; gap: 10px; }
+    .file {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .file strong { display: block; font-size: 14px; }
+    .file span { color: var(--muted); font-size: 12px; }
+    .choice { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0 14px; font-size: 14px; line-height: 1.45; text-transform: none; letter-spacing: 0; font-weight: 500; }
+    .choice input { margin-top: 3px; }
+    .legal { font-size: 13px; line-height: 1.5; color: var(--red-dark); margin: 0 0 8px; }
+    .back { margin-bottom: 18px; }
+    .table-wrap { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; background: transparent; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14px; }
+    th { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    tr.active { background: #fff6f6; }
+    .detail { margin-top: 18px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .switcher {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: white;
+      border-top: 1px solid var(--line);
+      display: flex; gap: 8px;
+      padding: 10px 16px;
+      overflow-x: auto;
+      z-index: 5;
+    }
+    .switcher button {
+      border: 1px solid var(--line);
+      background: white;
+      padding: 8px 12px;
+      font-size: 13px;
+      white-space: nowrap;
+      border-radius: 999px;
+    }
+    body[data-screen="login"] .switcher button[data-go="login"],
+    body[data-screen="sejours"] .switcher button[data-go="sejours"],
+    body[data-screen="dossier"] .switcher button[data-go="dossier"],
+    body[data-screen="docs"] .switcher button[data-go="docs"],
+    body[data-screen="bureau"] .switcher button[data-go="bureau"] {
+      background: var(--black);
+      color: white;
+      border-color: var(--black);
+    }
+    .login-error { color: var(--red-dark); }
+    .login-error a { color: var(--red); }
+    .doc-grid { display: grid; gap: 12px; }
+    .doc-section { margin: 28px 0 12px; font-family: "Libre Baskerville", serif; font-weight: 400; font-size: 26px; }
+    .san-grid { display: grid; gap: 8px 16px; grid-template-columns: 1fr 1fr; }
+    .yn { display: flex; gap: 14px; align-items: center; margin: 0 0 12px; font-size: 14px; text-transform: none; letter-spacing: 0; font-weight: 500; }
+    .yn input { margin: 0; }
+    .readonly { background: #f7f4f1; }
+    h3.bloc { margin: 22px 0 10px; font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .doc {
+      display: flex; justify-content: space-between; gap: 16px; align-items: center;
+    }
+    .doc small { display: block; color: var(--muted); margin-top: 4px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 800px) {
+      h1 { font-size: 32px; }
+      .grid-2, .stay, .field-row, .san-grid { grid-template-columns: 1fr; }
+      .top { padding: 12px 16px; }
+      .brand em { font-size: 14px; }
+      .who small { display: none; }
+    }
+  </style>
+</head>
+<body data-screen="login">
+  <header class="top">
+    <button class="brand" data-go="sejours" type="button">
+      <img class="logo" src="logo-thalie.png?v=2" alt="Thalie, séjours artistiques" />
+      <em>Mon dossier de séjour</em>
+    </button>
+    <div class="who">Camille Martin<small>Dernière connexion : 12 septembre 2026, 18 h 42</small></div>
+  </header>
+
+  <main class="wrap">
+    <section class="screen screen-login">
+      <h1>Connexion</h1>
+      <form class="card login-card" id="login-form">
+        <div id="login-step">
+          <label for="email">Email</label>
+          <input id="email" type="email" value="camille.martin@email.fr" autocomplete="username" />
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" autocomplete="current-password" />
+          <button class="btn" type="submit">Se connecter</button>
+          <p class="hint login-error" id="login-error" hidden></p>
+        </div>
+        <div id="first-password" hidden>
+          <p class="hint">Première connexion. Choisissez un mot de passe pour ce compte.</p>
+          <label for="new-password">Nouveau mot de passe</label>
+          <input id="new-password" type="password" autocomplete="new-password" />
+          <label for="confirm-password">Confirmez le mot de passe</label>
+          <input id="confirm-password" type="password" autocomplete="new-password" />
+          <button class="btn" type="button" id="save-password">Enregistrer et entrer</button>
+          <p class="hint login-error" id="password-error" hidden>Les deux mots de passe doivent être identiques.</p>
+        </div>
+      </form>
+    </section>
+
+    <section class="screen screen-sejours">
+      <h1>Bonjour Camille</h1>
+      <p class="lede">Vos enfants. Le séjour et les dates sont indiqués sous chaque prénom. Deux enfants peuvent partir sur le même séjour.</p>
+      <div class="stay-list">
+        <article class="card stay">
+          <div>
+            <h2 class="child-name">Léa Martin</h2>
+            <p>Bois · du 18 au 24 octobre 2026<br />Fiche sanitaire et vaccination encore demandées · relance le 11 octobre</p>
+          </div>
+          <div>
+            <span class="pill miss">À compléter</span>
+            <div style="height:12px"></div>
+            <button class="btn" type="button" data-go="dossier">Ouvrir le dossier</button>
+          </div>
+        </article>
+        <article class="card stay">
+          <div>
+            <h2 class="child-name">Tom Martin</h2>
+            <p>Bois · du 18 au 24 octobre 2026<br />Même séjour que Léa · pièces obligatoires validées</p>
+          </div>
+          <div>
+            <span class="pill ok">Complet</span>
+            <div style="height:12px"></div>
+            <button class="btn secondary" type="button" data-go="docs">Voir les documents</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen screen-dossier">
+      <p class="back"><button class="linkish" type="button" data-go="sejours">← Mes enfants</button></p>
+      <p class="kicker">Bois · du 18 au 24 octobre 2026</p>
+      <h1>Léa Martin</h1>
+      <div class="note">
+        Votre enfant est inscrit sur l’un de nos séjours. Les régimes alimentaires et les allergies qui n’ont pas été indiqués au préalable ne pourront pas être pris en compte par les équipes de cuisine. Si le départ a lieu dans moins de 4 jours, les spécificités ne sont plus modifiées.
+      </div>
+      <div class="grid-2">
+        <form class="card" action="#" onsubmit="return false">
+          <fieldset class="locked" disabled>
+            <legend>Validé le 12 septembre · plus modifiable</legend>
+            <p class="legal">Dans le cadre de la loi sur le droit à l’image, j’autorise la publication de l’image de mon enfant pour le blog du séjour, le spectacle diffusé en live, la brochure, le site internet et les réseaux sociaux de Thalie. Thalie s’interdit toute utilisation commerciale de ces images.</p>
+            <label class="choice"><input type="radio" name="image" /> Je donne le droit à l’image de mon enfant</label>
+            <label class="choice"><input type="radio" name="image" checked /> Je ne donne pas le droit à l’image. L’enfant ne sera pas filmé au spectacle de fin de séjour, ni sur scène avec les autres, ni dans les courts-métrages.</label>
+            <label class="choice"><input type="checkbox" checked /> J’accepte que mes informations personnelles soient conservées sur ce site jusqu’à la fin du séjour de mon enfant.</label>
+          </fieldset>
+          <label for="regime">Régime alimentaire</label>
+          <select id="regime">
+            <option>Sans régime</option>
+            <option selected>Sans porc</option>
+            <option>Sans viande</option>
+            <option>Végétarien</option>
+          </select>
+          <label for="allergies">Allergies alimentaires, médicamenteuses ou autres</label>
+          <textarea id="allergies">Fruits à coque</textarea>
+          <label for="infos">Informations utiles en complément</label>
+          <textarea id="infos"></textarea>
+          <button class="btn" type="button">Envoyer</button>
+          <p class="hint">Une fois envoyé et validé par le bureau, ce bloc ne pourra plus être modifié.</p>
+        </form>
+        <aside class="card">
+          <h2 style="font-family:'Libre Baskerville',serif;font-weight:400;margin:0 0 14px">Fichiers</h2>
+          <div class="files">
+            <div class="file"><div><strong>Fiche sanitaire</strong><span id="fiche-status">À remplir dans le formulaire · obligatoire</span></div><div class="actions"><span class="pill miss" id="fiche-pill">Manquante</span><button class="btn small" type="button" data-go="fiche" id="fiche-open">Remplir</button></div></div>
+            <div class="file"><div><strong>Attestation sécu</strong><span>Validée le 12 septembre · plus modifiable</span></div><span class="pill ok">Validée</span></div>
+            <div class="file"><div><strong>Carnet de vaccination, page 1</strong><span>Photo illisible</span></div><div class="actions"><span class="pill wait">À corriger</span><button class="btn small secondary" type="button">Remplacer</button></div></div>
+            <div class="file"><div><strong>Vaccinations, page 2</strong><span>Facultatif</span></div><span class="pill opt">Facultatif</span></div>
+            <div class="file"><div><strong>Mutuelle</strong><span>Facultatif</span></div><span class="pill opt">Facultatif</span></div>
+            <div class="file"><div><strong>Ordonnance</strong><span>Le cas échéant</span></div><span class="pill opt">Facultatif</span></div>
+            <div class="file"><div><strong>PAI</strong><span>Le cas échéant</span></div><span class="pill opt">Facultatif</span></div>
+            <div class="file"><div><strong>Pass nautique</strong><span>Séjours nautiques seulement</span></div><span class="pill opt">Non demandé</span></div>
+          </div>
+          <p class="hint">La relance du 11 octobre concerne la fiche sanitaire et le carnet de vaccination.</p>
+          <p><button class="linkish" type="button" data-go="docs">Documents envoyés par Thalie</button></p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="screen screen-docs">
+      <p class="back"><button class="linkish" type="button" data-go="dossier">← Dossier de Léa</button></p>
+      <p class="kicker">Léa Martin · Bois · du 18 au 24 octobre 2026</p>
+      <h1>Documents de Thalie</h1>
+      <h2 class="doc-section">Documents Séjours</h2>
+      <div class="doc-grid">
+        <article class="card doc"><div><strong>Fiche Trousseau - Valise</strong><small>Pour ce séjour · déposée par le bureau</small></div><button class="btn small" type="button">Télécharger</button></article>
+        <article class="card doc"><div><strong>Lettre du Séjour</strong><small>Pour ce séjour</small></div><button class="btn small" type="button">Télécharger</button></article>
+        <article class="card doc"><div><strong>Convocation Transport</strong><small>Votre famille · départ du 18 octobre</small></div><button class="btn small" type="button">Télécharger</button></article>
+      </div>
+      <h2 class="doc-section">Documents Administratifs &amp; Financiers</h2>
+      <div class="doc-grid">
+        <article class="card doc" id="attestation-presence-doc">
+          <div>
+            <strong>Attestation de présence</strong>
+            <small id="attestation-presence-hint">Document Thalie · par séjour</small>
+          </div>
+          <button class="btn small" type="button" id="btn-demander-attestation">Demander</button>
+          <span class="pill wait" id="attestation-presence-status" hidden>Demandée</span>
+        </article>
+        <article class="card doc"><div><strong>Facture</strong><small>Votre famille</small></div><button class="btn small" type="button">Télécharger</button></article>
+      </div>
+    </section>
+
+    <section class="screen screen-fiche">
+      <p class="back"><button class="linkish" type="button" data-go="dossier">← Dossier de Léa</button></p>
+      <p class="kicker">Bois · du 18 au 24 octobre 2026</p>
+      <h1>Fiche sanitaire de Léa Martin</h1>
+      <p class="lede">Les rubriques sont celles de la fiche sanitaire Thalie 2026. Le nom de l’enfant vient du dossier. La case en bas vaut signature.</p>
+      <form class="card" id="fiche-form" action="#" onsubmit="return false">
+        <h3 class="bloc">Enfant</h3>
+        <div class="san-grid">
+          <div><label>Nom</label><input class="readonly" value="Martin" readonly /></div>
+          <div><label>Prénom</label><input class="readonly" value="Léa" readonly /></div>
+          <div><label for="fs-naissance">Date de naissance</label><input id="fs-naissance" type="text" value="14/03/2016" /></div>
+          <div>
+            <label>Sexe</label>
+            <div class="yn">
+              <label class="yn"><input type="radio" name="fs-sexe" value="garcon" /> Garçon</label>
+              <label class="yn"><input type="radio" name="fs-sexe" value="fille" checked /> Fille</label>
+            </div>
+          </div>
+        </div>
+        <label>Date et lieu de séjour</label>
+        <input class="readonly" value="Bois · du 18 au 24 octobre 2026" readonly />
+
+        <h3 class="bloc">Vaccins obligatoires</h3>
+        <div class="san-grid">
+          <div><label>Diphtérie</label><div class="yn"><label class="yn"><input type="radio" name="v-diph" value="oui" /> Oui</label><label class="yn"><input type="radio" name="v-diph" value="non" /> Non</label></div><input id="vd-diph" placeholder="Date du dernier rappel" /></div>
+          <div><label>Tétanos</label><div class="yn"><label class="yn"><input type="radio" name="v-tet" value="oui" /> Oui</label><label class="yn"><input type="radio" name="v-tet" value="non" /> Non</label></div><input id="vd-tet" placeholder="Date du dernier rappel" /></div>
+          <div><label>Poliomyélite</label><div class="yn"><label class="yn"><input type="radio" name="v-pol" value="oui" /> Oui</label><label class="yn"><input type="radio" name="v-pol" value="non" /> Non</label></div><input id="vd-pol" placeholder="Date du dernier rappel" /></div>
+          <div><label>DTP ou Tétracoq</label><div class="yn"><label class="yn"><input type="radio" name="v-dtp" value="oui" /> Oui</label><label class="yn"><input type="radio" name="v-dtp" value="non" /> Non</label></div><input id="vd-dtp" placeholder="Date du dernier rappel" /></div>
+        </div>
+        <h3 class="bloc">Vaccins recommandés — dates</h3>
+        <div class="san-grid">
+          <div><label for="vd-hep">Hépatite B</label><input id="vd-hep" placeholder="Date" /></div>
+          <div><label for="vd-bcg">BCG</label><input id="vd-bcg" placeholder="Date" /></div>
+          <div><label for="vd-ror">Rubéole Oreillons Rougeole</label><input id="vd-ror" placeholder="Date" /></div>
+          <div><label for="vd-coq">Coqueluche</label><input id="vd-coq" placeholder="Date" /></div>
+        </div>
+
+        <h3 class="bloc">Renseignements médicaux</h3>
+        <label>L’enfant suit-il un traitement médical pendant le séjour ?</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-trait" value="oui" /> Oui</label><label class="yn"><input type="radio" name="fs-trait" value="non" checked /> Non</label></div>
+        <label for="fs-trait-detail">Si oui, médicaments et posologie</label>
+        <textarea id="fs-trait-detail"></textarea>
+
+        <h3 class="bloc">Maladies déjà contractées</h3>
+        <div class="san-grid" id="fs-maladies">
+          <div><label>Rubéole</label><div class="yn"><label class="yn"><input type="radio" name="m-rubeole" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-rubeole" value="non" /> Non</label></div></div>
+          <div><label>Varicelle</label><div class="yn"><label class="yn"><input type="radio" name="m-varicelle" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-varicelle" value="non" /> Non</label></div></div>
+          <div><label>Angine</label><div class="yn"><label class="yn"><input type="radio" name="m-angine" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-angine" value="non" /> Non</label></div></div>
+          <div><label>Rhumatismes</label><div class="yn"><label class="yn"><input type="radio" name="m-rhum" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-rhum" value="non" /> Non</label></div></div>
+          <div><label>Scarlatine</label><div class="yn"><label class="yn"><input type="radio" name="m-scar" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-scar" value="non" /> Non</label></div></div>
+          <div><label>Coqueluche</label><div class="yn"><label class="yn"><input type="radio" name="m-coq" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-coq" value="non" /> Non</label></div></div>
+          <div><label>Otite</label><div class="yn"><label class="yn"><input type="radio" name="m-otite" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-otite" value="non" /> Non</label></div></div>
+          <div><label>Rougeole</label><div class="yn"><label class="yn"><input type="radio" name="m-roug" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-roug" value="non" /> Non</label></div></div>
+          <div><label>Oreillons</label><div class="yn"><label class="yn"><input type="radio" name="m-ore" value="oui" /> Oui</label><label class="yn"><input type="radio" name="m-ore" value="non" /> Non</label></div></div>
+        </div>
+
+        <h3 class="bloc">Responsable de l’enfant</h3>
+        <div class="san-grid">
+          <div><label for="fs-rnom">Nom</label><input id="fs-rnom" value="Martin" /></div>
+          <div><label for="fs-rpre">Prénom</label><input id="fs-rpre" value="Camille" /></div>
+        </div>
+        <label for="fs-adr">Adresse</label><input id="fs-adr" value="12 rue des Arts, 75011 Paris" />
+        <div class="san-grid">
+          <div><label for="fs-tel">Téléphone domicile</label><input id="fs-tel" value="01 42 00 00 00" /></div>
+          <div><label for="fs-port">Portable</label><input id="fs-port" value="06 12 34 56 78" /></div>
+        </div>
+        <label for="fs-urg">Autre personne à contacter en cas d’urgence (nom et téléphone)</label>
+        <input id="fs-urg" value="Alex Martin 06 98 76 54 32" />
+
+        <h3 class="bloc">Difficultés de santé</h3>
+        <label>Asthme</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-asthme" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-asthme" value="oui" /> Oui</label></div>
+        <label>Si oui</label>
+        <div class="yn"><label class="yn"><input type="checkbox" id="fs-asthme-all" /> Allergique</label><label class="yn"><input type="checkbox" id="fs-asthme-eff" /> À l’effort</label></div>
+        <label>Allergies alimentaires</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-alim" value="non" /> Non</label><label class="yn"><input type="radio" name="fs-alim" value="oui" checked /> Oui</label></div>
+        <label>Allergies médicamenteuses</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-med" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-med" value="oui" /> Oui</label></div>
+        <label>Autres allergies</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-aut" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-aut" value="oui" /> Oui</label></div>
+        <label for="fs-cause">Précisez la cause de l’allergie</label>
+        <input id="fs-cause" value="Fruits à coque" />
+        <label>PAI pour cette allergie ?</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-pai-all" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-pai-all" value="oui" /> Oui</label></div>
+        <label>PAI, traitement ou suivi pour un autre motif ?</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-pai-aut" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-pai-aut" value="oui" /> Oui</label></div>
+        <label for="fs-patho">Si oui, pour quelle pathologie</label>
+        <input id="fs-patho" />
+        <label>Hospitalisé dans les 2 dernières années ?</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-hosp" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-hosp" value="oui" /> Oui</label></div>
+        <label for="fs-hosp-motif">Si oui, pour quel motif</label>
+        <input id="fs-hosp-motif" />
+        <label for="fs-ecole">Comment s’est déroulée l’année scolaire</label>
+        <textarea id="fs-ecole"></textarea>
+        <label>Régime alimentaire spécifique ?</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-reg" value="non" /> Non</label><label class="yn"><input type="radio" name="fs-reg" value="oui" checked /> Oui</label></div>
+        <label for="fs-reg-lequel">Si oui, lequel</label>
+        <input id="fs-reg-lequel" value="Sans porc" />
+        <label for="fs-reco">Recommandations utiles des parents</label>
+        <textarea id="fs-reco"></textarea>
+        <label>Besoin d’un accompagnement spécifique (handicap, maladie) ?</label>
+        <div class="yn"><label class="yn"><input type="radio" name="fs-acc" value="non" checked /> Non</label><label class="yn"><input type="radio" name="fs-acc" value="oui" /> Oui</label></div>
+
+        <h3 class="bloc">Signature</h3>
+        <p class="legal">Je, soussigné(e) Camille Martin, responsable légal de l’enfant, déclare exacts les renseignements portés sur cette fiche, m’engage à les réactualiser si nécessaire et autorise le responsable du séjour à prendre toutes mesures rendues nécessaires par l’état de l’enfant.</p>
+        <label class="choice"><input type="checkbox" id="fs-signe" /> Cette case vaut signature, le 29 septembre 2026.</label>
+        <p class="hint login-error" id="fiche-error" hidden>Cochez la case de signature pour générer la fiche.</p>
+        <button class="btn" type="button" id="fs-generate">Générer le PDF</button>
+      </form>
+    </section>
+
+    <section class="screen screen-bureau">
+      <h1>Bureau</h1>
+      <p class="lede">Une personne lit les pièces, les valide, puis les télécharge pour les déposer dans FileMaker. Le directeur les voit de ce côté-là.</p>
+      <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Parent</th><th>Dernière connexion</th><th>Enfant</th><th>Groupe</th><th>Obligatoires</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr class="active">
+            <td>Camille Martin<br /><small style="color:#7a6a60">n° 277 · CLIENTS 2026 INDIV</small></td>
+            <td>12 septembre 2026<br /><small style="color:#7a6a60">18 h 42</small></td>
+            <td>Léa Martin</td>
+            <td>BOIS AUTOMNE 2026<br /><small style="color:#7a6a60">groupe 328 · 18–24 octobre</small></td>
+            <td><span class="pill miss">Fiche manquante</span> <span class="pill wait">Vaccin à corriger</span></td>
+            <td><button class="btn small" type="button">Lire</button></td>
+          </tr>
+          <tr>
+            <td>Camille Martin</td>
+            <td>12 septembre 2026<br /><small style="color:#7a6a60">18 h 42</small></td>
+            <td>Tom Martin</td>
+            <td>BOIS AUTOMNE 2026<br /><small style="color:#7a6a60">même séjour que Léa</small></td>
+            <td><span class="pill ok">Complet</span></td>
+            <td><button class="btn small secondary" type="button">Lire</button></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="card detail">
+        <p class="kicker">Léa Martin · BOIS AUTOMNE 2026</p>
+        <div class="files">
+          <div class="file"><div><strong>Attestation sécu</strong><span>Prête à être glissée dans FileMaker</span></div><div class="actions"><span class="pill ok">Validée</span><button class="btn small secondary" type="button">Télécharger</button></div></div>
+          <div class="file"><div><strong>Carnet de vaccination</strong><span>Photo trop sombre</span></div><div class="actions"><button class="btn small" type="button">Demander une autre photo</button></div></div>
+          <div class="file"><div><strong>Convocation Transport</strong><span>PDF à déposer pour les parents</span></div><button class="btn small secondary" type="button">Déposer</button></div>
+          <div class="file"><div><strong>Fiche Trousseau - Valise</strong><span>Déjà visible par toutes les familles de BOIS AUTOMNE 2026</span></div><span class="pill ok">En ligne</span></div>
+          <div class="file"><div><strong>Lettre du Séjour</strong><span>PDF à déposer pour les parents · BOIS AUTOMNE 2026</span></div><button class="btn small secondary" type="button">Déposer</button></div>
+        </div>
+      </div>
+      <div class="card detail" id="bureau-attestations">
+        <p class="kicker">Demandes · Attestations de présence</p>
+        <div class="files">
+          <p class="hint" id="bureau-attestation-empty" style="margin:0">Aucune demande en attente.</p>
+          <div class="file" id="bureau-attestation-row" hidden>
+            <div>
+              <strong>Attestation de présence</strong>
+              <span>Camille Martin · Léa Martin · Demandée</span>
+            </div>
+            <div class="actions">
+              <span class="pill wait">Demandée</span>
+              <button class="btn small" type="button">À traiter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="switcher" aria-label="Écrans de la maquette">
+    <button type="button" data-go="login">1 · Connexion</button>
+    <button type="button" data-go="sejours">2 · Enfants</button>
+    <button type="button" data-go="dossier">3 · Dossier</button>
+    <button type="button" data-go="docs">4 · Documents Thalie</button>
+    <button type="button" data-go="bureau">5 · Bureau</button>
+  </nav>
+  <script>
+    function go(screen) {
+      document.body.dataset.screen = screen;
+      window.scrollTo(0, 0);
+    }
+    document.body.addEventListener("click", function (event) {
+      var target = event.target.closest("[data-go]");
+      if (!target) return;
+      go(target.getAttribute("data-go"));
+    });
+    var knownAccounts = { "camille.martin@email.fr": { first: true } };
+    document.getElementById("login-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      var email = document.getElementById("email").value.trim().toLowerCase();
+      var error = document.getElementById("login-error");
+      var account = knownAccounts[email];
+      if (!account) {
+        error.hidden = false;
+        error.innerHTML = "Cette adresse ne correspond à aucun compte client. Pour une demande de réservation, contactez <a href=\"mailto:monsejour@thalie.org\">monsejour@thalie.org</a>.";
+        return;
+      }
+      error.hidden = true;
+      if (account.first) {
+        document.getElementById("login-step").hidden = true;
+        document.getElementById("first-password").hidden = false;
+        return;
+      }
+      go("sejours");
+    });
+    document.getElementById("save-password").addEventListener("click", function () {
+      var created = document.getElementById("new-password").value;
+      var confirmed = document.getElementById("confirm-password").value;
+      var mismatch = document.getElementById("password-error");
+      if (!created || created !== confirmed) {
+        mismatch.hidden = false;
+        return;
+      }
+      mismatch.hidden = true;
+      knownAccounts["camille.martin@email.fr"].first = false;
+      go("sejours");
+    });
+    function ficheValue(name) {
+      var chosen = document.querySelector('#fiche-form input[name="' + name + '"]:checked');
+      return chosen ? chosen.value : "";
+    }
+    function ficheText(id) {
+      var field = document.getElementById(id);
+      return field ? field.value.trim() : "";
+    }
+    function loadPdfLib() {
+      if (window.PDFLib) return Promise.resolve();
+      return new Promise(function (resolve, reject) {
+        var script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js";
+        script.onload = function () { resolve(); };
+        script.onerror = function () { reject(new Error("pdf-lib")); };
+        document.head.appendChild(script);
+      });
+    }
+    document.getElementById("fs-generate").addEventListener("click", function () {
+      var error = document.getElementById("fiche-error");
+      if (!document.getElementById("fs-signe").checked) {
+        error.hidden = false;
+        return;
+      }
+      error.hidden = true;
+      loadPdfLib().then(function () {
+        return fetch("fiche/modele.pdf").then(function (response) {
+          if (!response.ok) throw new Error("modele");
+          return response.arrayBuffer();
+        });
+      }).then(function (bytes) {
+        var PDFLib = window.PDFLib;
+        return PDFLib.PDFDocument.load(bytes).then(function (pdf) {
+          return pdf.embedFont(PDFLib.StandardFonts.Helvetica).then(function (font) {
+            var pages = pdf.getPages();
+            var ink = PDFLib.rgb(0.05, 0.15, 0.45);
+            function write(page, value, x, y, size) {
+              if (!value) return;
+              page.drawText(String(value).replace(/œ/g, "oe").replace(/Œ/g, "OE"), {
+                x: x, y: y, size: size || 9, font: font, color: ink
+              });
+            }
+            function mark(page, x, y) {
+              write(page, "X", x, y, 10);
+            }
+            function yn(page, value, xYes, xNo, y) {
+              if (value === "oui") mark(page, xYes, y);
+              if (value === "non") mark(page, xNo, y);
+            }
+            var p1 = pages[0];
+            var p2 = pages[1];
+            write(p1, "Martin", 330, 812);
+            write(p1, "Lea", 330, 798);
+            write(p1, ficheText("fs-naissance") || "14/03/2016", 340, 785);
+            if (ficheValue("fs-sexe") === "garcon") mark(p1, 352, 766);
+            if (ficheValue("fs-sexe") === "fille") mark(p1, 440, 766);
+            write(p1, "Bois, du 18 au 24 octobre 2026", 270, 712);
+            [
+              ["v-diph", "vd-diph", 581],
+              ["v-tet", "vd-tet", 564],
+              ["v-pol", "vd-pol", 549],
+              ["v-dtp", "vd-dtp", 533]
+            ].forEach(function (row) {
+              yn(p1, ficheValue(row[0]), 178, 210, row[2]);
+              write(p1, ficheText(row[1]), 248, row[2]);
+            });
+            write(p1, ficheText("vd-hep"), 500, 581);
+            write(p1, ficheText("vd-bcg"), 500, 565);
+            write(p1, ficheText("vd-ror"), 500, 549);
+            write(p1, ficheText("vd-coq"), 500, 533);
+            yn(p1, ficheValue("fs-trait"), 365, 425, 436);
+            [
+              ["m-rubeole", 38, 86, 304],
+              ["m-varicelle", 141, 188, 304],
+              ["m-angine", 252, 299, 304],
+              ["m-rhum", 367, 414, 304],
+              ["m-scar", 478, 525, 304],
+              ["m-coq", 39, 86, 260],
+              ["m-otite", 142, 189, 260],
+              ["m-roug", 252, 299, 260],
+              ["m-ore", 367, 414, 260]
+            ].forEach(function (row) {
+              yn(p1, ficheValue(row[0]), row[1], row[2], row[3]);
+            });
+            write(p1, ficheText("fs-rnom"), 78, 214);
+            write(p1, ficheText("fs-rpre"), 365, 214);
+            write(p1, ficheText("fs-adr"), 105, 196);
+            write(p1, ficheText("fs-tel"), 125, 171);
+            write(p1, ficheText("fs-port"), 375, 169);
+            write(p1, ficheText("fs-urg"), 400, 152, 8);
+            write(p1, "Camille Martin", 145, 122);
+            write(p1, "29/09/2026", 78, 57);
+            write(p1, "Case cochée valant signature", 365, 57, 8);
+            yn(p2, ficheValue("fs-asthme"), 205, 136, 765);
+            if (document.getElementById("fs-asthme-all").checked) mark(p2, 345, 766);
+            if (document.getElementById("fs-asthme-eff").checked) mark(p2, 458, 766);
+            yn(p2, ficheValue("fs-alim"), 207, 138, 724);
+            yn(p2, ficheValue("fs-med"), 468, 398, 724);
+            yn(p2, ficheValue("fs-aut"), 207, 138, 703);
+            write(p2, ficheText("fs-cause"), 210, 677);
+            yn(p2, ficheValue("fs-pai-all"), 349, 280, 655);
+            yn(p2, ficheValue("fs-pai-aut"), 494, 425, 611);
+            write(p2, ficheText("fs-patho"), 175, 595);
+            yn(p2, ficheValue("fs-hosp"), 413, 344, 519);
+            write(p2, ficheText("fs-hosp-motif"), 40, 482);
+            write(p2, ficheText("fs-ecole"), 40, 425);
+            yn(p2, ficheValue("fs-reg"), 367, 298, 373);
+            write(p2, ficheText("fs-reg-lequel"), 110, 355);
+            write(p2, ficheText("fs-reco"), 40, 230);
+            yn(p2, ficheValue("fs-acc"), 413, 344, 166);
+            write(p2, ficheText("fs-trait-detail"), 40, 78);
+            return pdf.save();
+          });
+        });
+      }).then(function (out) {
+        var blob = new Blob([out], { type: "application/pdf" });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = "fiche-sanitaire-lea-martin.pdf";
+        link.click();
+        window.open(url, "_blank");
+        document.getElementById("fiche-status").textContent = "PDF généré le 29 septembre 2026 · en attente de validation par le bureau";
+        var pill = document.getElementById("fiche-pill");
+        pill.textContent = "Envoyée";
+        pill.className = "pill wait";
+        document.getElementById("fiche-open").textContent = "Modifier";
+        go("dossier");
+      }).catch(function () {
+        error.hidden = false;
+        error.textContent = "Le PDF n’a pas pu être généré. Réessayez dans un instant.";
+      });
+    });
+
+    var attestationRequested = false;
+    function syncAttestationPresence() {
+      var btn = document.getElementById("btn-demander-attestation");
+      var status = document.getElementById("attestation-presence-status");
+      var hint = document.getElementById("attestation-presence-hint");
+      var empty = document.getElementById("bureau-attestation-empty");
+      var row = document.getElementById("bureau-attestation-row");
+      if (!btn || !status || !hint || !empty || !row) return;
+      if (attestationRequested) {
+        btn.hidden = true;
+        status.hidden = false;
+        hint.textContent = "Demande envoyée au bureau · par séjour";
+        empty.hidden = true;
+        row.hidden = false;
+      } else {
+        btn.hidden = false;
+        status.hidden = true;
+        hint.textContent = "Document Thalie · par séjour";
+        empty.hidden = false;
+        row.hidden = true;
+      }
+    }
+    document.getElementById("btn-demander-attestation").addEventListener("click", function () {
+      if (attestationRequested) return;
+      attestationRequested = true;
+      syncAttestationPresence();
+    });
+    syncAttestationPresence();
+  </script>
+</body>
+</html>

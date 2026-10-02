@@ -2,6 +2,20 @@
   "name": "docsthalie",
   "private": true,
   "scripts": {
-    "dev": "python3 -m http.server 3456 --bind 127.0.0.1 --directory maquette"
+    "dev": "node ./node_modules/next/dist/bin/next dev --hostname localhost --port 3000",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.5.4",
+    "pdf-lib": "^1.17.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.8.0"
   }
 }

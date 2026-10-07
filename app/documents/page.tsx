@@ -134,6 +134,10 @@ export default function DocumentsPage() {
           ← {depuisDossier ? "Dossier" : "Mes enfants"}
         </Link>
       </p>
+      <p className="lede tight">
+        Les documents que Thalie met à votre disposition. Les listes ci-dessous affichent une année, un enfant ou un
+        séjour.
+      </p>
       <div className="doc-filters" role="group" aria-label="Filtrer les documents">
         <label>
           Année
@@ -279,12 +283,14 @@ function Attestation({
       <div>
         <strong>Attestation de présence</strong>
         <span className="doc-suffix person"> - {child}</span>
-        <small>{requested ? `Demande envoyée au bureau, ${stay}` : stay}</small>
+        <small>
+          {requested ? `Demande envoyée au bureau, ${stay}` : `${stay}. Cliquez sur Demander pour la recevoir.`}
+        </small>
       </div>
       {requested ? (
         <span className="pill wait">Demandée</span>
       ) : (
-        <button className="btn small" type="button" onClick={onRequest}>
+        <button className="btn small ask" type="button" onClick={onRequest}>
           Demander
         </button>
       )}

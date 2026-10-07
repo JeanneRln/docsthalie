@@ -64,7 +64,9 @@ export async function submitFiche(
     adr: text(data, "fs-adr"),
     tel: text(data, "fs-tel"),
     port: text(data, "fs-port"),
-    urg: text(data, "fs-urg"),
+    urg: [text(data, "fs-urg-nom"), text(data, "fs-urg-pre"), text(data, "fs-urg-statut"), text(data, "fs-urg-tel")]
+      .filter(Boolean)
+      .join(" "),
     asthme: text(data, "fs-asthme"),
     asthmeAll: data.get("fs-asthme-all") === "on",
     asthmeEff: data.get("fs-asthme-eff") === "on",
@@ -119,7 +121,7 @@ export function FicheQuestions() {
         <p className="hint">
           Se référer au carnet de santé ou aux certificats de vaccinations de l’enfant et en joindre une copie.
         </p>
-        <h3 className="bloc">Vaccins obligatoires</h3>
+        <h3 className="bloc sub">Vaccins obligatoires</h3>
         <p className="hint">Dates derniers rappels</p>
         <div className="vax-grid">
           <Vax name="v-diph" dateName="vd-diph" label="Diphtérie" />
@@ -132,7 +134,7 @@ export function FicheQuestions() {
           Si l’enfant n’a pas les vaccins obligatoires, joindre un certificat médical de contre-indication.
         </p>
         <p className="hint">Attention, le vaccin anti-tétanique ne présente aucune contre-indication.</p>
-        <h3 className="bloc">Vaccins recommandés</h3>
+        <h3 className="bloc sub">Vaccins recommandés</h3>
         <div className="date-grid">
           <div>
             <label htmlFor="vd-hep">Hépatite B</label>
@@ -156,19 +158,6 @@ export function FicheQuestions() {
           </div>
         </div>
 
-        <h3 className="bloc">Renseignements médicaux concernant l’enfant</h3>
-        <Question label="L’enfant suit-il un traitement médical pendant le séjour ?">
-          <YesNo name="fs-trait" defaultValue="non" />
-        </Question>
-        <p className="hint">
-          Si oui, joindre impérativement l’ordonnance médicale à l’envoi numérique de cette fiche.
-        </p>
-        <p className="hint">
-          Les médicaments correspondants devront être remis le premier jour à l’équipe dans leur emballage d’origine
-          marqué au nom de l’enfant.
-        </p>
-        <p className="hint">Aucun médicament ne pourra être pris sans ordonnance.</p>
-
         <h3 className="bloc">L’enfant a-t-il déjà eu les maladies suivantes ?</h3>
         <div className="ill-grid">
           <Question label="Rubéole"><YesNo name="m-rubeole" /></Question>
@@ -181,30 +170,6 @@ export function FicheQuestions() {
           <Question label="Rougeole"><YesNo name="m-roug" /></Question>
           <Question label="Oreillons"><YesNo name="m-ore" /></Question>
         </div>
-
-        <h3 className="bloc">Responsable de l’enfant</h3>
-        <div className="pair">
-          <div>
-            <label htmlFor="fs-rnom">Nom</label>
-            <input id="fs-rnom" name="fs-rnom" defaultValue="Martin" />
-          </div>
-          <div>
-            <label htmlFor="fs-rpre">Prénom</label>
-            <input id="fs-rpre" name="fs-rpre" defaultValue="Camille" />
-          </div>
-          <div>
-            <label htmlFor="fs-tel">Tel domicile</label>
-            <input id="fs-tel" name="fs-tel" defaultValue="01 42 00 00 00" />
-          </div>
-          <div>
-            <label htmlFor="fs-port">Portable</label>
-            <input id="fs-port" name="fs-port" defaultValue="06 12 34 56 78" />
-          </div>
-        </div>
-        <label htmlFor="fs-adr">Adresse</label>
-        <input className="compact" id="fs-adr" name="fs-adr" defaultValue="12 rue des Arts, 75011 Paris" />
-        <label htmlFor="fs-urg">Autre personne à contacter en cas d’urgence (nom et tel)</label>
-        <input className="compact" id="fs-urg" name="fs-urg" defaultValue="Alex Martin 06 98 76 54 32" />
 
         <h3 className="bloc">Indiquez ici les difficultés de santé</h3>
         <p className="hint">Ces rubriques sont importantes pour accueillir au mieux votre enfant.</p>
@@ -282,10 +247,63 @@ export function FicheQuestions() {
           <YesNo name="fs-acc" defaultValue="non" />
         </Question>
         <p className="hint">(handicap, maladie)</p>
+        <h3 className="bloc">Renseignements médicaux concernant l’enfant</h3>
+        <Question label="L’enfant suit-il un traitement médical pendant le séjour ?">
+          <YesNo name="fs-trait" defaultValue="non" />
+        </Question>
+        <p className="hint">
+          Si oui, joindre impérativement l’ordonnance médicale à l’envoi numérique de cette fiche.
+        </p>
+        <p className="hint">
+          Les médicaments correspondants devront être remis le premier jour à l’équipe dans leur emballage d’origine
+          marqué au nom de l’enfant.
+        </p>
+        <p className="hint">Aucun médicament ne pourra être pris sans ordonnance.</p>
         <h3 className="bloc">Si traitement suivi par votre enfant, merci de nous l’indiquer précisément</h3>
         <p className="hint">(noms des médicaments et posologie)</p>
         <textarea id="fs-trait-detail" name="fs-trait-detail" rows={2} />
         <p className="hint">Attention, ne pas fournir de pilulier, mais bien les médicaments dans leur boîte d’origine.</p>
+
+        <h3 className="bloc">Responsable de l’enfant</h3>
+        <div className="pair">
+          <div>
+            <label htmlFor="fs-rpre">Prénom</label>
+            <input id="fs-rpre" name="fs-rpre" defaultValue="Camille" readOnly />
+          </div>
+          <div>
+            <label htmlFor="fs-rnom">Nom</label>
+            <input id="fs-rnom" name="fs-rnom" defaultValue="Martin" readOnly />
+          </div>
+          <div>
+            <label htmlFor="fs-tel">Tel domicile</label>
+            <input id="fs-tel" name="fs-tel" defaultValue="01 42 00 00 00" readOnly />
+          </div>
+          <div>
+            <label htmlFor="fs-port">Portable</label>
+            <input id="fs-port" name="fs-port" defaultValue="06 12 34 56 78" readOnly />
+          </div>
+        </div>
+        <label htmlFor="fs-adr">Adresse</label>
+        <input className="compact" id="fs-adr" name="fs-adr" defaultValue="12 rue des Arts, 75011 Paris" readOnly />
+        <p className="hint">Autre personne à contacter en cas d’urgence</p>
+        <div className="pair">
+          <div>
+            <label htmlFor="fs-urg-pre">Prénom</label>
+            <input id="fs-urg-pre" name="fs-urg-pre" />
+          </div>
+          <div>
+            <label htmlFor="fs-urg-nom">Nom</label>
+            <input id="fs-urg-nom" name="fs-urg-nom" />
+          </div>
+          <div>
+            <label htmlFor="fs-urg-statut">Statut</label>
+            <input id="fs-urg-statut" name="fs-urg-statut" />
+          </div>
+          <div>
+            <label htmlFor="fs-urg-tel">Numéro de téléphone</label>
+            <input id="fs-urg-tel" name="fs-urg-tel" />
+          </div>
+        </div>
 
         <h3 className="bloc">Signature</h3>
         <p className="legal">

@@ -44,9 +44,10 @@ export default function LoginPage() {
   return (
     <section className="screen-login">
       <h1>Connexion</h1>
+      <p className="lede">Indiquez l’adresse email de votre compte client, puis votre mot de passe.</p>
       {step === "login" ? (
         <form className="card login-card" onSubmit={onSubmit}>
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Adresse email</label>
           <input
             id="email"
             name="email"
@@ -69,13 +70,13 @@ export default function LoginPage() {
         </form>
       ) : (
         <form className="card login-card" onSubmit={onSavePassword}>
-          <p className="hint">Première connexion. Choisissez un mot de passe pour ce compte.</p>
+          <p className="hint">C’est votre première connexion. Choisissez un mot de passe, vous le réutiliserez ensuite.</p>
           <label htmlFor="new-password">Nouveau mot de passe</label>
           <input id="new-password" name="new-password" type="password" autoComplete="new-password" />
           <label htmlFor="confirm-password">Confirmez le mot de passe</label>
           <input id="confirm-password" name="confirm-password" type="password" autoComplete="new-password" />
           <button className="btn" type="submit">
-            Enregistrer et entrer
+            Enregistrer et continuer
           </button>
           {mismatch ? <p className="hint login-error">Les deux mots de passe doivent être identiques.</p> : null}
         </form>

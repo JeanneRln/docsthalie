@@ -5,7 +5,8 @@ export default function EnfantsPage() {
     <section>
       <h1 className="person">Bonjour Camille</h1>
       <p className="lede">
-        Vos enfants et leurs séjours passés et futurs.
+        Vos enfants et leurs séjours passés et futurs. Pour un séjour à venir, ouvrez « À compléter ». Vous y enverrez
+        les documents et la fiche sanitaire.
       </p>
       <div className="stay-list">
         <p className="account-docs">

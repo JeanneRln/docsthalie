@@ -31,6 +31,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </header>
       <main className="wrap">{children}</main>
       <nav className="switcher" aria-label="Écrans de la maquette">
+        <span className="switcher-label">Maquette</span>
         {screens.map((screen) => (
           <Link
             key={screen.href}

@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppState } from "@/components/Providers";
 import { FicheQuestions, submitFiche } from "@/components/FicheForm";
 
 export default function DossierPage() {
+  return (
+    <Suspense fallback={null}>
+      <DossierContent />
+    </Suspense>
+  );
+}
+
+function DossierContent() {
   const { ficheSent, markFicheSent } = useAppState();
   const params = useSearchParams();
   const passion = params.get("sejour") === "passion";

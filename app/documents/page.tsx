@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useEffect } from "react";
+import { Fragment, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppState } from "@/components/Providers";
 import { attestationKey, childName, children, seasonalYear, stays, stayById, type ChildId } from "@/lib/sejours";
@@ -17,6 +17,14 @@ type Block = {
 };
 
 export default function DocumentsPage() {
+  return (
+    <Suspense fallback={null}>
+      <DocumentsContent />
+    </Suspense>
+  );
+}
+
+function DocumentsContent() {
   const { attestations, requestAttestation, convocationDeposee } = useAppState();
   const search = useSearchParams();
   const router = useRouter();

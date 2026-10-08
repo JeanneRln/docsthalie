@@ -273,6 +273,10 @@ a.pill { text-decoration: none; cursor: pointer; }
 .add-line { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
 .add-line .yn { margin: 0; }
 .add-line .btn { margin-top: 0; flex-shrink: 0; }
+.file .yn,
+.file .choice { gap: 10px; align-items: flex-start; }
+.file .yn input,
+.file .choice input { width: auto; margin: 3px 0 0; flex: 0 0 auto; }
 .file-input {
   position: absolute;
   width: 1px;

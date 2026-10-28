@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppState } from "@/components/Providers";
-import { FicheQuestions, submitFiche } from "@/components/FicheForm";
 
 export default function DossierPage() {
   return (
@@ -15,18 +14,14 @@ export default function DossierPage() {
 }
 
 function DossierContent() {
-  const { ficheSent, markFicheSent } = useAppState();
+  const { ficheSent } = useAppState();
   const params = useSearchParams();
   const passion = params.get("sejour") === "passion";
   const lea = params.get("enfant") !== "tom";
   const childName = lea ? "Léa Martin" : "Tom Martin";
-  const prenom = childName.split(" ")[0];
-  const nom = childName.split(" ").slice(1).join(" ");
   const stayLabel = passion
     ? "Passion Cinéma (Menton) du 14 au 20 février 2027"
     : "Studio Théâtre (Bois) du 18 au 24 octobre 2026";
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
   const [filesLocked, setFilesLocked] = useState(false);
   const [filesError, setFilesError] = useState("");
   const choices = useRef({ secu: false, vaccin: false, mutuelle: false, ordonnance: false, pai: false });
@@ -43,24 +38,8 @@ function DossierContent() {
     setFilesLocked(true);
   }
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setBusy(true);
-    const message = await submitFiche(event.currentTarget, {
-      nom,
-      prenom,
-      naissance: prenom === "Léa" ? "14/03/2016" : "",
-      sexe: prenom === "Tom" ? "garcon" : "fille",
-      sejour: stayLabel,
-    });
-    setBusy(false);
-    if (message) {
-      setError(message);
-      return;
-    }
-    setError("");
-    markFicheSent();
-  }
+  const query = params.toString();
+  const ficheHref = query ? `/fiche?${query}` : "/fiche";
 
   return (
     <section>
@@ -77,7 +56,8 @@ function DossierContent() {
           choix ne peuvent plus être modifiés.
         </li>
         <li>
-          <strong>Fiche sanitaire.</strong> Remplissez-la, cochez la case qui vaut signature, puis envoyez-la.
+          <strong>Fiche sanitaire.</strong> Ouvrez « Compléter en ligne », cochez la case qui vaut signature, puis
+          envoyez-la.
         </li>
       </ol>
       <div className="note">
@@ -144,6 +124,19 @@ function DossierContent() {
           )}
         </div>
         </fieldset>
+        <div className="file">
+          <div>
+            <strong>Fiche Sanitaire</strong>
+            <span>
+              {ficheSent
+                ? "Envoyée, en attente de validation."
+                : "Questionnaire à remplir pour éditer la fiche."}
+            </span>
+          </div>
+          <Link className="btn small" href={ficheHref}>
+            Compléter en ligne
+          </Link>
+        </div>
         {filesLocked ? null : (
           <p className="hint">
             {lea
@@ -158,15 +151,6 @@ function DossierContent() {
           </button>
         )}
       </aside>
-      <form className="card dossier-form" onSubmit={onSubmit}>
-        <h2 className="side-title">Remplir la fiche sanitaire numériquement</h2>
-        {ficheSent ? <p className="hint">PDF généré, en attente de validation par le bureau.</p> : null}
-        <FicheQuestions />
-        {error ? <p className="hint login-error">{error}</p> : null}
-        <button className="btn" type="submit" disabled={busy}>
-          {busy ? "Génération…" : "Envoyer la fiche"}
-        </button>
-      </form>
       <aside className="card dossier-consent">
         <h2 className="side-title">Droit à l’image et données personnelles</h2>
         <fieldset className="locked" disabled>

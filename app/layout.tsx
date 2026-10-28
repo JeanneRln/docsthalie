@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import { Libre_Baskerville, Montserrat } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 import { Providers } from "@/components/Providers";
 import { Shell } from "@/components/Shell";
 import "./globals.css";
 
-const montserrat = Montserrat({
+const outfit = Outfit({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-montserrat",
+  variable: "--font-outfit",
 });
 
-const baskerville = Libre_Baskerville({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
-  variable: "--font-baskerville",
+  variable: "--font-fraunces",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${montserrat.variable} ${baskerville.variable}`}>
+    <html lang="fr" className={`${outfit.variable} ${fraunces.variable}`}>
       <body>
         <Providers>
           <Shell>{children}</Shell>

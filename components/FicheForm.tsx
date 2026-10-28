@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { generateFichePdf, openPdf, type FicheAnswers } from "@/lib/generateFiche";
 
 function YesNo({ name, defaultValue }: { name: string; defaultValue?: "oui" | "non" }) {
@@ -105,6 +105,53 @@ function Vax({ name, dateName, label }: { name: string; dateName: string; label:
   );
 }
 
+function Regime() {
+  const [specific, setSpecific] = useState(true);
+
+  return (
+    <>
+      <Question label="Votre enfant suit-il un régime alimentaire spécifique ?">
+        <div className="yn">
+          <label className="yn">
+            <input
+              type="radio"
+              name="fs-reg"
+              value="oui"
+              checked={specific}
+              onChange={() => setSpecific(true)}
+            />{" "}
+            Oui
+          </label>
+          <label className="yn">
+            <input
+              type="radio"
+              name="fs-reg"
+              value="non"
+              checked={!specific}
+              onChange={() => setSpecific(false)}
+            />{" "}
+            Non
+          </label>
+        </div>
+      </Question>
+      {specific ? (
+        <>
+          <label htmlFor="fs-reg-lequel">Si oui, lequel</label>
+          <select className="compact" id="fs-reg-lequel" name="fs-reg-lequel" defaultValue="Sans porc">
+            <option>Sans porc</option>
+            <option>Sans viande</option>
+            <option>Végétarien</option>
+          </select>
+          <p className="hint">
+            Nous pouvons fournir des menus spécifiques sans porc, mais pour les inscrits qui indiquent ne pas manger de
+            viande, nous compenserons avec des laitages et des légumes.
+          </p>
+        </>
+      ) : null}
+    </>
+  );
+}
+
 function Question({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="q-line">
@@ -201,6 +248,7 @@ export function FicheQuestions() {
           <YesNo name="fs-pai-all" defaultValue="non" />
         </Question>
         <p className="hint">Si oui, merci de le joindre impérativement avec l’ordonnance si besoin.</p>
+        <h3 className="bloc">Antécédents</h3>
         <Question label="Votre enfant a-t-il un PAI ou un traitement ou est-il suivi pour un autre motif ?">
           <YesNo name="fs-pai-aut" defaultValue="non" />
         </Question>
@@ -210,7 +258,6 @@ export function FicheQuestions() {
           (épilepsie stabilisée, TDAH, suivi psychologique, maladie chronique, TSA, syndromes, anxiété, fin de traitement
           maladie...)
         </p>
-        <h3 className="bloc">Antécédents</h3>
         <Question label="Votre enfant a-t-il été hospitalisé dans les 2 dernières années ?">
           <YesNo name="fs-hosp" defaultValue="non" />
         </Question>
@@ -222,20 +269,7 @@ export function FicheQuestions() {
         <textarea id="fs-ecole" name="fs-ecole" rows={2} />
         <p className="hint">(RAS, harcèlement, isolement, crises d’angoisses, HPI, etc...)</p>
         <h3 className="bloc">Autres informations</h3>
-        <Question label="Votre enfant suit-il un régime alimentaire spécifique ?">
-          <YesNo name="fs-reg" defaultValue="oui" />
-        </Question>
-        <label htmlFor="fs-reg-lequel">Si oui, lequel</label>
-        <select className="compact" id="fs-reg-lequel" name="fs-reg-lequel" defaultValue="Sans porc">
-          <option>Sans régime</option>
-          <option>Sans porc</option>
-          <option>Sans viande</option>
-          <option>Végétarien</option>
-        </select>
-        <p className="hint">
-          Nous pouvons fournir des menus spécifiques sans porc, mais pour les inscrits qui indiquent ne pas manger de
-          viande, nous compenserons avec des laitages et des légumes.
-        </p>
+        <Regime />
         <h3 className="bloc">Recommandations utiles des parents</h3>
         <p className="hint">
           Votre enfant porte-t-il des lentilles, des lunettes, des prothèses auditives, des prothèses dentaires ? A-t-il
@@ -258,7 +292,7 @@ export function FicheQuestions() {
           Les médicaments correspondants devront être remis le premier jour à l’équipe dans leur emballage d’origine
           marqué au nom de l’enfant.
         </p>
-        <p className="hint">Aucun médicament ne pourra être pris sans ordonnance.</p>
+        <p className="hint">Aucun médicament ne pourra être pris sans ordonnance (même Doliprane, Spasfon).</p>
         <h3 className="bloc">Si traitement suivi par votre enfant, merci de nous l’indiquer précisément</h3>
         <p className="hint">(noms des médicaments et posologie)</p>
         <textarea id="fs-trait-detail" name="fs-trait-detail" rows={2} />

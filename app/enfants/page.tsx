@@ -1,4 +1,13 @@
 import Link from "next/link";
+import { children, stays, type ChildId, type Stay } from "@/lib/sejours";
+
+function dossierHref(childId: ChildId, stayId: string) {
+  return childId === "tom" ? `/dossier?sejour=${stayId}&enfant=tom` : `/dossier?sejour=${stayId}`;
+}
+
+function pastLabel(stay: Stay) {
+  return stay.title.replace(/\)\s*$/, `, ${stay.when})`);
+}
 
 export default function EnfantsPage() {
   return (
@@ -14,70 +23,52 @@ export default function EnfantsPage() {
             Consulter mes documents administratifs et financiers
           </Link>
         </p>
-        <article className="card stay">
-          <h2 className="child-name person">Léa Martin</h2>
-          <div className="history">
-            <div className="history-group">
-              <p className="history-label">Séjours à venir</p>
-              <ul className="upcoming">
-                <li className="stay-row">
-                  <span className="stay-title">Passion Cinéma (Menton)</span>
-                  <span className="stay-when">du 14 au 20 février 2027</span>
-                  <Link className="pill miss" href="/dossier?sejour=passion">
-                    À compléter
-                  </Link>
-                </li>
-                <li className="stay-row">
-                  <span className="stay-title">Studio Théâtre (Bois)</span>
-                  <span className="stay-when">du 18 au 24 octobre 2026</span>
-                  <Link className="pill miss" href="/dossier">
-                    À compléter
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="history-group">
-              <p className="history-label">Séjours passés</p>
-              <ul className="past">
-                <li>La Vie d'Artiste Danse Classique (Bernay, Été 2025)</li>
-                <li>Studio Danse Classique (Bois, Automne 2024)</li>
-              </ul>
-            </div>
-          </div>
-        </article>
-        <article className="card stay">
-          <h2 className="child-name person">Tom Martin</h2>
-          <div className="history">
-            <div className="history-group">
-              <p className="history-label">Séjours à venir</p>
-              <ul className="upcoming">
-                <li className="stay-row">
-                  <span className="stay-title">Passion Cinéma (Menton)</span>
-                  <span className="stay-when">du 14 au 20 février 2027</span>
-                  <Link className="pill miss" href="/dossier?sejour=passion&enfant=tom">
-                    À compléter
-                  </Link>
-                </li>
-                <li className="stay-row">
-                  <span className="stay-title">Studio Théâtre (Bois)</span>
-                  <span className="stay-when">du 18 au 24 octobre 2026</span>
-                  <span className="stay-actions">
-                    <Link className="btn secondary" href="/documents?enfant=tom&sejour=studio-theatre-2026">
-                      Voir les documents
-                    </Link>
-                    <span className="pill ok">Complet</span>
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <div className="history-group">
-              <p className="history-label">Séjours passés</p>
-              <ul className="past">
-                <li>La Vie d'Artiste Danse Classique (Bernay, Été 2025)</li>
-              </ul>
-            </div>
-          </div>
-        </article>
+        {children.map((child) => {
+          const enrolled = stays.filter((stay) => stay.children.some((item) => item.id === child.id));
+          const upcoming = enrolled.filter((stay) => stay.upcoming);
+          const past = enrolled.filter((stay) => !stay.upcoming);
+          return (
+            <article className="card stay" key={child.id}>
+              <h2 className="child-name person">{child.name}</h2>
+              <div className="history">
+                <div className="history-group">
+                  <p className="history-label">Séjours à venir</p>
+                  <ul className="upcoming">
+                    {upcoming.map((stay) => {
+                      const complet = stay.children.find((item) => item.id === child.id)?.sanitaireComplet === true;
+                      return (
+                        <li className="stay-row" key={stay.id}>
+                          <span className="stay-title">{stay.title}</span>
+                          <span className="stay-when">{stay.when}</span>
+                          {complet ? (
+                            <span className="stay-actions">
+                              <Link className="btn secondary" href={`/documents?enfant=${child.id}&sejour=${stay.id}`}>
+                                Voir les documents
+                              </Link>
+                              <span className="pill ok">Complet</span>
+                            </span>
+                          ) : (
+                            <Link className="pill miss" href={dossierHref(child.id, stay.id)}>
+                              À compléter
+                            </Link>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+                <div className="history-group">
+                  <p className="history-label">Séjours passés</p>
+                  <ul className="past">
+                    {past.map((stay) => (
+                      <li key={stay.id}>{pastLabel(stay)}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );

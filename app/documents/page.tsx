@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Fragment, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppState } from "@/components/Providers";
-import { attestationKey, childName, children, seasonalYear, stays, stayById, type ChildId } from "@/lib/sejours";
+import { attestationKey, canonicalStayId, childName, children, familyQuery, seasonalYear, stays, stayById, type ChildId } from "@/lib/sejours";
 
 type Block = {
   childId: ChildId;
@@ -30,7 +30,7 @@ function DocumentsContent() {
   const router = useRouter();
   const anneeRaw = search.get("annee");
   const enfantParam = search.get("enfant") || "tous";
-  const sejourParam = search.get("sejour") || "tous";
+  const sejourParam = canonicalStayId(search.get("sejour")) || "tous";
   const docs = search.get("docs") || "tous";
   const depuisDossier = search.get("depuis") === "dossier";
 
@@ -131,9 +131,7 @@ function DocumentsContent() {
     update(patch);
   }
 
-  const backHref = depuisDossier
-    ? `/dossier${dossierQuery(enfant, sejour)}`
-    : "/enfants";
+  const backHref = depuisDossier ? `/dossier?${familyQuery(search)}` : "/enfants";
 
   return (
     <section>
@@ -236,14 +234,6 @@ function DocumentsContent() {
 
 function stayLabel(title: string) {
   return title.replace(/\s*\([^)]*\)\s*$/, "");
-}
-
-function dossierQuery(enfant: string, sejour: string) {
-  const params = new URLSearchParams();
-  if (enfant === "tom") params.set("enfant", "tom");
-  if (sejour === "passion-2027") params.set("sejour", "passion");
-  const query = params.toString();
-  return query ? `?${query}` : "";
 }
 
 function DocRow({

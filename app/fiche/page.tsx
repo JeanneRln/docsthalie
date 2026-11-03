@@ -5,6 +5,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppState } from "@/components/Providers";
 import { FicheQuestions, submitFiche } from "@/components/FicheForm";
+import { canonicalStayId, defaultStayId, familyQuery, stayById } from "@/lib/sejours";
 
 export default function FichePage() {
   return (
@@ -17,16 +18,13 @@ export default function FichePage() {
 function FicheContent() {
   const { ficheSent, markFicheSent } = useAppState();
   const params = useSearchParams();
-  const passion = params.get("sejour") === "passion";
+  const stay = stayById(canonicalStayId(params.get("sejour")) ?? defaultStayId)!;
   const lea = params.get("enfant") !== "tom";
   const childName = lea ? "Léa Martin" : "Tom Martin";
   const prenom = childName.split(" ")[0];
   const nom = childName.split(" ").slice(1).join(" ");
-  const stayLabel = passion
-    ? "Passion Cinéma (Menton) du 14 au 20 février 2027"
-    : "Studio Théâtre (Bois) du 18 au 24 octobre 2026";
-  const query = params.toString();
-  const dossierHref = query ? `/dossier?${query}` : "/dossier";
+  const stayLabel = `${stay.title} ${stay.when}`;
+  const dossierHref = `/dossier?${familyQuery(params)}`;
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 

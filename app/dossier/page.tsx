@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppState } from "@/components/Providers";
+import { canonicalStayId, defaultStayId, familyQuery, stayById } from "@/lib/sejours";
 
 export default function DossierPage() {
   return (
@@ -16,12 +17,10 @@ export default function DossierPage() {
 function DossierContent() {
   const { ficheSent } = useAppState();
   const params = useSearchParams();
-  const passion = params.get("sejour") === "passion";
+  const stay = stayById(canonicalStayId(params.get("sejour")) ?? defaultStayId)!;
   const lea = params.get("enfant") !== "tom";
   const childName = lea ? "Léa Martin" : "Tom Martin";
-  const stayLabel = passion
-    ? "Passion Cinéma (Menton) du 14 au 20 février 2027"
-    : "Studio Théâtre (Bois) du 18 au 24 octobre 2026";
+  const stayLabel = `${stay.title} ${stay.when}`;
   const [filesLocked, setFilesLocked] = useState(false);
   const [filesError, setFilesError] = useState("");
   const choices = useRef({ secu: false, vaccin: false, mutuelle: false, ordonnance: false, pai: false });
@@ -38,8 +37,7 @@ function DossierContent() {
     setFilesLocked(true);
   }
 
-  const query = params.toString();
-  const ficheHref = query ? `/fiche?${query}` : "/fiche";
+  const ficheHref = `/fiche?${familyQuery(params)}`;
 
   return (
     <section>

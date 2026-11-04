@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS inscriptions (
   active_enfant_session VARCHAR(73) AS (
     CASE
       WHEN statut_administratif IN ('place_bloquee', 'confirmee')
-      THEN CONCAT(enfant_id, ':', session_id)
+      THEN CONCAT(RTRIM(enfant_id), ':', RTRIM(session_id))
       ELSE NULL
     END
   ) STORED,
